@@ -13,8 +13,8 @@ const route = express.Router();
 export default (router) => {
   router.use("/spotify", route);
 
-  route.get("/authlink", async (req, res) => {
-    return getRedirectURI();
+  route.get("/authlink", (req, res) => {
+    return res.status(200).send(getRedirectURI());
   });
 
   route.get("/user/info/:userAccessToken", async (req, res) => {

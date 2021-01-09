@@ -9,6 +9,6 @@ export default async (app) => {
   console.log("Express loaded");
 
   console.log("Loading mongoose");
-  loadMongoose(app);
+  loadMongoose();
   console.log("Mongoose Loaded");
 };
