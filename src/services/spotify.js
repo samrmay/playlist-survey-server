@@ -9,8 +9,17 @@ export function getRedirectURI() {
   return { authURL };
 }
 
-export function getUserId(userAccessToken) {
+export function getUserInfo(userAccessToken) {
   return fetch(process.env.SPOTIFY_API + "me", {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + userAccessToken,
+    },
+  }).then((response) => response.json());
+}
+
+export function getUserPlaylists(userAccessToken) {
+  return fetch(process.env.SPOTIFY_API + "me/playlists", {
     method: "GET",
     headers: {
       Authorization: "Bearer " + userAccessToken,
