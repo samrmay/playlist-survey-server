@@ -1,13 +1,13 @@
 import express from "express";
-import { getPlaylistBySpotifyID, deletePlaylist } from "../services/playlists";
+import { getPlaylistBySpotifyId, deletePlaylist } from "../services/playlists";
 
 const route = express.Router();
 
 export default (router) => {
   router.use("/playlist", route);
 
-  route.get("/:spotifyID", async (req, res) => {
-    const result = await getPlaylistBySpotifyID(spotifyID);
+  route.get("/:spotifyId", async (req, res) => {
+    const result = await getPlaylistBySpotifyId(spotifyId);
     const body = { playlist: result.playlist, error: result.error };
     return res.status(result.status).send(body);
   });

@@ -1,7 +1,7 @@
 import { Playlist } from "../models/playlist.model";
 
-export async function getPlaylistBySpotifyID(spotifyID) {
-  const result = await Playlist.findOne({ spotifyID });
+export async function getPlaylistBySpotifyId(spotifyId) {
+  const result = await Playlist.findOne({ spotifyId });
 
   let error = null;
   let status = 200;
