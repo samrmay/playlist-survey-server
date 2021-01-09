@@ -1,4 +1,5 @@
 import { Survey } from "../models/survey.model";
+import { getPlaylistById, getUserInfo } from "./spotify";
 
 export async function getSurveyByPlaylist(PlaylistSpotifyId) {
   const result = await Survey.findOne({ PlaylistSpotifyId });
@@ -12,12 +13,23 @@ export async function getSurveyByPlaylist(PlaylistSpotifyId) {
   return { survey: result, error, status };
 }
 
-export async function postPlaylist(spotifyID) {
+export async function postSurvey(name, playlistId, userAccessToken) {
+  const playlist = await getPlaylistById(playlistId, userAccessToken);
+  const user = await getUserInfo(userAccessToken);
+
+  if (!user) {
+    return null;
+  }
+  if (!playlist) {
+    return null;
+  }
+
+  console.log(playlist, user);
   return null;
 }
 
 export async function deleteSurvey(id) {
-  const deleted = Survey.findByIdAndDelete(id);
+  const deleted = await Survey.findByIdAndDelete(id);
   if (deleted) {
     return { error: null, status: 204 };
   } else {
