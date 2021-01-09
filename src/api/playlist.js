@@ -1,0 +1,20 @@
+import express from "express";
+import { getPlaylistBySpotifyID, deletePlaylist } from "../services/playlists";
+
+const route = express.Router();
+
+export default (router) => {
+  router.use("/playlist", route);
+
+  route.get("/:spotifyID", async (req, res) => {
+    const result = await getPlaylistBySpotifyID(spotifyID);
+    const body = { playlist: result.playlist, error: result.error };
+    return res.status(result.status).send(body);
+  });
+
+  route.delete("", async (req, res) => {
+    const { id } = req.body;
+    const { status, error } = await deletePlaylist(id);
+    return res.status(status).send({ error });
+  });
+};
