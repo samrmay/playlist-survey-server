@@ -71,3 +71,18 @@ export function getPlaylistById(id, userAccessToken) {
     },
   }).then((response) => response.json());
 }
+
+export function getTrackIdsFromPlaylist(playlistId, userAccessToken) {
+  if (!playlistId) {
+    return null;
+  }
+
+  const url = process.env.SPOTIFY_API + "playlists/" + playlistId + "/tracks/?";
+
+  return fetch(url + "fields=items(track(id))", {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + userAccessToken,
+    },
+  }).then((response) => response.json());
+}

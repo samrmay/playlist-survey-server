@@ -1,5 +1,9 @@
 import { Survey } from "../models/survey.model";
-import { getPlaylistById, getUserInfo } from "./spotify";
+import {
+  getPlaylistById,
+  getUserInfo,
+  getTrackIdsFromPlaylist,
+} from "./spotify";
 
 export async function getSurveyByPlaylist(PlaylistSpotifyId) {
   const result = await Survey.findOne({ PlaylistSpotifyId });
@@ -8,6 +12,18 @@ export async function getSurveyByPlaylist(PlaylistSpotifyId) {
   let status = 200;
   if (!result) {
     error = "Survey with that playlist does not exist";
+    status = 404;
+  }
+  return { survey: result, error, status };
+}
+
+export async function getSurveyById(id) {
+  const result = await Survey.findById(id);
+
+  let error = null;
+  let status = 200;
+  if (!result) {
+    error = "Survey with that id does not exist";
     status = 404;
   }
   return { survey: result, error, status };
@@ -24,8 +40,25 @@ export async function postSurvey(name, playlistId, userAccessToken) {
     return null;
   }
 
-  console.log(playlist, user);
-  return null;
+  const trackIds = await getTrackIdsFromPlaylist(playlistId, userAccessToken);
+  const trackRankingObj = trackIds.items.map((item) => {
+    return {
+      trackSpotifyId: item.track.id,
+      trackRanking: 0,
+    };
+  });
+
+  const newSurvey = await new Survey({
+    name,
+    playlistSpotifyId: playlistId,
+    owner: user.display_name,
+    trackRankings: trackRankingObj,
+  });
+  if (newSurvey) {
+    newSurvey.save();
+    return { survey: newSurvey, error: null, status: 201 };
+  }
+  return { survey: null, error: "Resource could not be created", status: 409 };
 }
 
 export async function deleteSurvey(id) {

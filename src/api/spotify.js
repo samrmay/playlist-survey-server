@@ -19,7 +19,6 @@ export default (router) => {
 
   route.get("/user/info/:userAccessToken", async (req, res) => {
     const result = await getUserInfo(req.params.userAccessToken);
-    console.log(result);
     if (result.error) {
       return res.status(404).send({ error: result.error, info: null });
     } else {
@@ -29,7 +28,6 @@ export default (router) => {
 
   route.get("/user/playlists/:userAccessToken", async (req, res) => {
     const result = await getUserPlaylists(req.params.userAccessToken);
-    console.log(result);
     if (result.error) {
       return res.status(404).send({ error: result.error, playlists: null });
     } else {
