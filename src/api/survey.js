@@ -30,9 +30,8 @@ export default (router) => {
     return res.status(result.status).send(body);
   });
 
-  route.delete("", async (req, res) => {
-    const { id } = req.body;
-    const { status, error } = await deleteSurvey(id);
+  route.delete("/:id", async (req, res) => {
+    const { status, error } = await deleteSurvey(req.params.id);
     return res.status(status).send({ error });
   });
 };
