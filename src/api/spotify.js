@@ -34,4 +34,13 @@ export default (router) => {
       return res.status(200).send({ error: null, playlists: result });
     }
   });
+
+  route.get("/tracks/:id", async (req, res) => {
+    const token = await getAccessToken();
+    const result = await getTrackById(req.params.id, token);
+
+    if (result.track) {
+      return res.status(200).send({ error: null, track: result.track });
+    }
+  });
 };
