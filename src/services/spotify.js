@@ -59,15 +59,14 @@ export function getTrackById(id, token) {
   }).then((response) => response.json());
 }
 
-export function getPlaylistById(id, userAccessToken) {
+export function getPlaylistById(id, token) {
   if (!id) {
     return null;
   }
-
   return fetch(process.env.SPOTIFY_API + `playlists/${id}`, {
     method: "GET",
     headers: {
-      Authorization: "Bearer " + userAccessToken,
+      Authorization: "Bearer " + token,
     },
   }).then((response) => response.json());
 }
@@ -85,4 +84,20 @@ export function getTrackIdsFromPlaylist(playlistId, userAccessToken) {
       Authorization: "Bearer " + userAccessToken,
     },
   }).then((response) => response.json());
+}
+
+export function getPlaylistTracks(id, token) {
+  if (!id) {
+    return null;
+  }
+
+  return fetch(
+    process.env.SPOTIFY_API + "playlists/" + id + "/tracks?offset=0&limit=100",
+    {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    }
+  ).then((response) => response.json());
 }

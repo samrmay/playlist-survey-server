@@ -6,6 +6,7 @@ import {
   getAccessToken,
   getTrackById,
   getPlaylistById,
+  getPlaylistTracks,
 } from "../services/spotify";
 
 const route = express.Router();
@@ -42,5 +43,21 @@ export default (router) => {
     if (result.track) {
       return res.status(200).send({ error: null, track: result.track });
     }
+  });
+
+  route.get("/playlist/tracks/:id", async (req, res) => {
+    const token = await getAccessToken();
+    const result = await getPlaylistTracks(req.params.id, token.access_token);
+
+    return res.status(200).send({ error: null, tracks: result });
+  });
+
+  route.get("/playlist/:id", async (req, res) => {
+    const token = await getAccessToken();
+    const result = await getPlaylistById(req.params.id, token.access_token);
+    if (result.id) {
+      return res.status(200).send({ error: null, playlist: result });
+    }
+    return res.status(409).send({ error: result.error, playlist: null });
   });
 };
