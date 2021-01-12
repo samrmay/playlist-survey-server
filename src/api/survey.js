@@ -2,7 +2,8 @@ import express from "express";
 import {
   getSurveyByPlaylist,
   getSurveyById,
-  postSurvey,
+  putRankings,
+  postSurveyRankings,
   deleteSurvey,
 } from "../services/surveys";
 
@@ -26,6 +27,13 @@ export default (router) => {
   route.post("/", async (req, res) => {
     const { name, playlistId, userAccessToken } = req.body;
     const result = await postSurvey(name, playlistId, userAccessToken);
+    const body = { survey: result.survey, error: result.error };
+    return res.status(result.status).send(body);
+  });
+
+  route.put("/:id/rankings", async (req, res) => {
+    const { pointsObjs } = req.body;
+    const result = await putSurveyRankings(req.params.id, pointsObjs);
     const body = { survey: result.survey, error: result.error };
     return res.status(result.status).send(body);
   });

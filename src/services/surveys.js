@@ -29,6 +29,24 @@ export async function getSurveyById(id) {
   return { survey: result, error, status };
 }
 
+export async function putSurveyRankings(id, rankings) {
+  const survey = await Survey.findById(id);
+  if (!survey) {
+    return { status: 404, survey: null, error: "Survey could not be found" };
+  }
+  // Iterate through rankings, add points from each item
+
+  const modelRankings = survey.trackRankings;
+  for (let i in rankings) {
+    const id = rankings[i]._id;
+    const index = modelRankings.findIndex((ranking) => ranking._id === id);
+    modelRankings[index] += rankings[i].points;
+  }
+
+  survey.save();
+  return { survey, error: null, status: 201 };
+}
+
 export async function postSurvey(name, playlistId, userAccessToken) {
   const playlist = await getPlaylistById(playlistId, userAccessToken);
   const user = await getUserInfo(userAccessToken);
