@@ -2,8 +2,7 @@ import express from "express";
 import {
   getSurveyByPlaylist,
   getSurveyById,
-  putRankings,
-  postSurveyRankings,
+  putSurveyRankings,
   deleteSurvey,
 } from "../services/surveys";
 
