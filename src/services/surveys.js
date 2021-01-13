@@ -85,3 +85,14 @@ export async function deleteSurvey(id) {
     return { error: "Could not be deleted (may not exist)", status: 409 };
   }
 }
+
+export async function getTopSurveys() {
+  const surveys = await Survey.find()
+    .sort({ createdAt: -1 })
+    .limit(10)
+    .select("-trackRankings");
+  if (!surveys) {
+    return { status: 404, error: "surveys not found", surveys: null };
+  }
+  return { status: 200, error: null, surveys };
+}

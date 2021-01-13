@@ -4,6 +4,8 @@ import {
   getSurveyById,
   putSurveyRankings,
   deleteSurvey,
+  getTopSurveys,
+  postSurvey,
 } from "../services/surveys";
 
 const route = express.Router();
@@ -14,6 +16,12 @@ export default (router) => {
   route.get("/search/:spotifyId", async (req, res) => {
     const result = await getSurveyByPlaylist(spotifyId);
     const body = { survey: result.survey, error: result.error };
+    return res.status(result.status).send(body);
+  });
+
+  route.get("/top", async (req, res) => {
+    const result = await getTopSurveys();
+    const body = { surveys: result.surveys, error: result.error };
     return res.status(result.status).send(body);
   });
 
