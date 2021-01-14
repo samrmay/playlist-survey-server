@@ -3,10 +3,35 @@ import fetch from "node-fetch";
 export function getRedirectURI() {
   let authURL = `${process.env.SPOTIFY_ACCOUNTS}authorize?client_id=${process.env.SPOTIFY_CLIENT_ID}`;
   const scopes = "scope=playlist-read-private&playlist-read-collaborative";
-  const responseType = "response_type=token";
+  const responseType = "response_type=code";
   const redirect = `redirect_uri=${process.env.REDIRECT_URI}`;
   authURL += `&${scopes}&${responseType}&${redirect}`;
   return { authURL };
+}
+
+export function getUserAccessToken(code) {
+  const authString = getAuthString();
+
+  return fetch(process.env.SPOTIFY_ACCOUNTS + "api/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: authString,
+    },
+    body: `grant_type=authorization_code&code=${code}&redirect_uri=${process.env.REDIRECT_URI}`,
+  }).then((response) => response.json());
+}
+
+export function getRefreshToken(refreshToken) {
+  const authString = getAuthString();
+  return fetch(process.env.SPOTIFY_ACCOUNTS + "api/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: authString,
+    },
+    body: `grant_type=refresh_token&refresh_token=${refreshToken}`,
+  }).then((response) => response.json());
 }
 
 export function getUserInfo(userAccessToken) {
@@ -28,11 +53,7 @@ export function getUserPlaylists(userAccessToken) {
 }
 
 export function getAccessToken() {
-  const authString =
-    "Basic " +
-    Buffer.from(
-      process.env.SPOTIFY_CLIENT_ID + ":" + process.env.SPOTIFY_CLIENT_SECRET
-    ).toString("base64");
+  const authString = getAuthString();
 
   return fetch(process.env.SPOTIFY_ACCOUNTS + "api/token", {
     method: "POST",
@@ -100,4 +121,13 @@ export function getPlaylistTracks(id, token) {
       },
     }
   ).then((response) => response.json());
+}
+
+function getAuthString() {
+  return (
+    "Basic " +
+    Buffer.from(
+      process.env.SPOTIFY_CLIENT_ID + ":" + process.env.SPOTIFY_CLIENT_SECRET
+    ).toString("base64")
+  );
 }

@@ -7,6 +7,8 @@ import {
   getTrackById,
   getPlaylistById,
   getPlaylistTracks,
+  getUserAccessToken,
+  getRefreshToken,
 } from "../services/spotify";
 
 const route = express.Router();
@@ -16,6 +18,30 @@ export default (router) => {
 
   route.get("/authlink", (req, res) => {
     return res.status(200).send(getRedirectURI());
+  });
+
+  route.get("/user/accesstoken/:code", async (req, res) => {
+    const { code } = req.params;
+    const result = await getUserAccessToken(code);
+    if (result.error) {
+      return res
+        .status(404)
+        .send({ error: result.error, accessToken: null, refreshToken: null });
+    }
+    return res.status(200).send({
+      error: null,
+      accessToken: result.access_token,
+      refreshToken: result.refresh_token,
+    });
+  });
+
+  route.get("/user/refreshtoken/:refreshToken", async (req, res) => {
+    const { refreshToken } = req.params;
+    const result = await getRefreshToken(refreshToken);
+    if (result.error) {
+      return res.status(404).send({ error: result.error, token: null });
+    }
+    return res.status(200).send({ error: null, token: result.token });
   });
 
   route.get("/user/info/:userAccessToken", async (req, res) => {
