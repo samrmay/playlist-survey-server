@@ -32,8 +32,13 @@ export default (router) => {
   });
 
   route.post("/", async (req, res) => {
-    const { name, playlistId, userAccessToken } = req.body;
-    const result = await postSurvey(name, playlistId, userAccessToken);
+    const { name, playlistId, userAccessToken, refreshToken } = req.body;
+    const result = await postSurvey(
+      name,
+      playlistId,
+      userAccessToken,
+      refreshToken
+    );
     const body = { survey: result.survey, error: result.error };
     return res.status(result.status).send(body);
   });

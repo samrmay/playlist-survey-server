@@ -45,7 +45,12 @@ export async function putSurveyRankings(id, rankings) {
   return { survey, error: null, status: 201 };
 }
 
-export async function postSurvey(name, playlistId, userAccessToken) {
+export async function postSurvey(
+  name,
+  playlistId,
+  userAccessToken,
+  refreshToken
+) {
   const playlist = await getPlaylistById(playlistId, userAccessToken);
   const user = await getUserInfo(userAccessToken);
 
@@ -69,6 +74,7 @@ export async function postSurvey(name, playlistId, userAccessToken) {
     playlistSpotifyId: playlistId,
     owner: user.display_name,
     trackRankings: trackRankingObj,
+    refreshToken,
   });
   if (newSurvey) {
     newSurvey.save();

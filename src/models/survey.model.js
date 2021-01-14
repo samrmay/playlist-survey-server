@@ -6,6 +6,7 @@ const surveySchema = new mongoose.Schema({
   owner: String,
   playlistSpotifyId: { type: String, required: true },
   trackRankings: [{ trackSpotifyId: String, trackRanking: Number }],
+  refreshToken: { type: String, required: true },
 });
 
 export const Survey = mongoose.model("Survey", surveySchema);
