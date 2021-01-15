@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 
 export function getRedirectURI() {
   let authURL = `${process.env.SPOTIFY_ACCOUNTS}authorize?client_id=${process.env.SPOTIFY_CLIENT_ID}`;
-  const scopes = "scope=playlist-read-private&playlist-read-collaborative";
+  const scopes = "scope=playlist-modify-public";
   const responseType = "response_type=code";
   const redirect = `redirect_uri=${process.env.REDIRECT_URI}`;
   authURL += `&${scopes}&${responseType}&${redirect}`;
@@ -121,6 +121,26 @@ export function getPlaylistTracks(id, token) {
       },
     }
   ).then((response) => response.json());
+}
+
+export function reorderPlaylistItems(
+  id,
+  token,
+  rangeStart,
+  rangeLength,
+  insertBefore
+) {
+  return fetch(process.env.SPOTIFY_API + "playlists" + id + "/tracks", {
+    method: "PUT",
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+    body: JSON.stringify({
+      range_start: rangeStart,
+      range_length: rangeLength,
+      insert_before: insertBefore,
+    }),
+  }).then((response) => response.json());
 }
 
 function getAuthString() {
