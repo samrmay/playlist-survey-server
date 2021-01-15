@@ -3,6 +3,8 @@ import {
   getPlaylistById,
   getUserInfo,
   getTrackIdsFromPlaylist,
+  reorderPlaylistItems,
+  getRefreshToken,
 } from "./spotify";
 
 export async function getSurveyByPlaylist(PlaylistSpotifyId) {
@@ -41,8 +43,24 @@ export async function putSurveyRankings(id, rankings) {
     const index = modelRankings.findIndex((item) => item._id == id);
     modelRankings[index].trackRanking += rankings[i].points;
   }
+
+  // Sort by ranking
+  survey.trackRankings = modelRankings.sort(
+    (a, b) => a.trackRanking - b.trackRanking
+  );
   survey.save();
+
+  // Update spotify playlist with track ranking order
+  await updateSpotifyPlaylist(modelRankings, survey);
+
   return { survey, error: null, status: 201 };
+}
+
+async function updateSpotifyPlaylist(oldRankings, document) {
+  const { refreshToken, trackRankings } = document;
+  const accessToken = await getRefreshToken(refreshToken);
+
+  return null;
 }
 
 export async function postSurvey(
