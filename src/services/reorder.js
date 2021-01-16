@@ -26,7 +26,7 @@ function lis(arr) {
 
   for (let i = 0; i < n; i++) {
     let temp_arr = [arr[i]];
-    for (let j = i - 1; j < 0; j--) {
+    for (let j = i - 1; j > 0; j--) {
       if (arr[j] <= temp_arr[0]) {
         temp_arr.splice(0, 0, arr[j]);
       }
