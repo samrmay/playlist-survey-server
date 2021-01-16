@@ -38,10 +38,11 @@ export default (router) => {
   route.get("/user/refreshtoken/:refreshToken", async (req, res) => {
     const { refreshToken } = req.params;
     const result = await getRefreshToken(refreshToken);
-    if (result.error) {
-      return res.status(404).send({ error: result.error, token: null });
+    console.log(result);
+    if (result.access_token) {
+      return res.status(200).send({ error: null, token: result.access_token });
     }
-    return res.status(200).send({ error: null, token: result.token });
+    return res.status(404).send({ error: result.error, token: null });
   });
 
   route.get("/user/info/:userAccessToken", async (req, res) => {

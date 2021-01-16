@@ -6,6 +6,7 @@ import {
   reorderPlaylistItems,
   getRefreshToken,
 } from "./spotify";
+import getReorderSteps from "./reorder";
 
 export async function getSurveyByPlaylist(PlaylistSpotifyId) {
   const result = await Survey.findOne({ PlaylistSpotifyId });
@@ -45,21 +46,40 @@ export async function putSurveyRankings(id, rankings) {
   }
 
   // Sort by ranking
+  const unsorted = [...modelRankings];
   survey.trackRankings = modelRankings.sort(
-    (a, b) => a.trackRanking - b.trackRanking
+    (a, b) => b.trackRanking - a.trackRanking
   );
   survey.save();
 
   // Update spotify playlist with track ranking order
-  await updateSpotifyPlaylist(modelRankings, survey);
+  await updateSpotifyPlaylist(unsorted, survey);
 
   return { survey, error: null, status: 201 };
 }
 
 async function updateSpotifyPlaylist(oldRankings, document) {
-  const { refreshToken, trackRankings } = document;
-  const accessToken = await getRefreshToken(refreshToken);
+  const { refreshToken, trackRankings, playlistSpotifyId } = document;
+  const callArr = getReorderSteps(oldRankings, trackRankings);
+  console.log(callArr);
+  const tokenResponse = await getRefreshToken(refreshToken);
+  const token = tokenResponse.access_token;
 
+  let snapshotId = null;
+  for (let i in callArr) {
+    const { rangeStart, rangeLength, insertBefore } = callArr[i];
+    const reorderResponse = await reorderPlaylistItems(
+      playlistSpotifyId,
+      token,
+      rangeStart,
+      rangeLength,
+      insertBefore,
+      snapshotId
+    );
+    if (reorderResponse.snapshot_id) {
+      snapshotId = reorderResponse.snapshot_id;
+    }
+  }
   return null;
 }
 

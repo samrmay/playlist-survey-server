@@ -128,18 +128,25 @@ export function reorderPlaylistItems(
   token,
   rangeStart,
   rangeLength,
-  insertBefore
+  insertBefore,
+  snapshotId = null
 ) {
-  return fetch(process.env.SPOTIFY_API + "playlists" + id + "/tracks", {
+  const body = {
+    range_start: parseInt(rangeStart),
+    range_length: rangeLength,
+    insert_before: insertBefore,
+  };
+
+  if (snapshotId) {
+    body.snapshot_id = snapshotId;
+  }
+  return fetch(process.env.SPOTIFY_API + "playlists/" + id + "/tracks", {
     method: "PUT",
     headers: {
       Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      range_start: rangeStart,
-      range_length: rangeLength,
-      insert_before: insertBefore,
-    }),
+    body: JSON.stringify(body),
   }).then((response) => response.json());
 }
 

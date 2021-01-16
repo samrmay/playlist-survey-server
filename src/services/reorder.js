@@ -5,15 +5,19 @@ export default (oldArr, newArr) => {
   for (let i in oldArr) {
     indexArr.push(newArr.indexOf(oldArr[i]));
   }
-
   const longest = lis(indexArr);
+
+  const sortedIndexArr = [...indexArr];
+  console.log(indexArr);
   for (let i in indexArr) {
     if (!longest.includes(indexArr[i])) {
       resultArr.push({
-        rangeStart: i,
+        rangeStart: sortedIndexArr.indexOf(indexArr[i]),
         rangeLength: 1,
         insertBefore: indexArr[i] + 1,
       });
+      const removed = sortedIndexArr.splice(i, 1);
+      sortedIndexArr.splice(indexArr[i] - 1, 0, removed);
     }
   }
 
