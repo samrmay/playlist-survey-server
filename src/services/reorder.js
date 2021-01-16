@@ -32,7 +32,7 @@ function lis(arr) {
       }
     }
 
-    if (temp_arr.length > longest_sub.length) {
+    if (temp_arr.length > longestSub.length) {
       longestSub = temp_arr;
     }
   }
