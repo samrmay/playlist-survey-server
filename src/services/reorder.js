@@ -5,20 +5,44 @@ export default (oldArr, newArr) => {
   for (let i in oldArr) {
     indexArr.push(newArr.indexOf(oldArr[i]));
   }
-  const longest = lis(indexArr);
-
-  const sortedIndexArr = [...indexArr];
+  let longest = lis(indexArr);
   console.log(indexArr);
-  for (let i in indexArr) {
-    if (!longest.includes(indexArr[i])) {
-      resultArr.push({
-        rangeStart: sortedIndexArr.indexOf(indexArr[i]),
-        rangeLength: 1,
-        insertBefore: indexArr[i] + 1,
-      });
-      const removed = sortedIndexArr.splice(i, 1);
-      sortedIndexArr.splice(indexArr[i] - 1, 0, removed);
+
+  while (longest.length !== indexArr.length) {
+    for (let i in indexArr) {
+      if (
+        !longest.includes(indexArr[i]) &&
+        (longest.includes(indexArr[i] + 1) || longest.includes(indexArr[i] - 1))
+      ) {
+        let target = -1;
+        if (
+          longest.includes(indexArr[i] + 1) &&
+          indexArr.indexOf(indexArr[i] + 1) >= 0
+        ) {
+          target = indexArr.indexOf(indexArr[i] + 1);
+        } else {
+          target = indexArr.indexOf(indexArr[i] - 1) + 1;
+        }
+        resultArr.push({
+          rangeStart: i,
+          rangeLength: 1,
+          insertBefore: target,
+        });
+        console.log(i, indexArr[i], target);
+
+        indexArr.splice(target, 0, indexArr[i]);
+        let misplacedIndex = indexArr.indexOf(indexArr[target]);
+        if (misplacedIndex == target) {
+          misplacedIndex = indexArr.indexOf(indexArr[target], target + 1);
+        }
+        indexArr.splice(misplacedIndex, 1);
+
+        break;
+      }
     }
+    longest = lis(indexArr);
+    console.log("longest: ", longest);
+    console.log("indexArr: ", indexArr);
   }
 
   return resultArr;
@@ -30,7 +54,7 @@ function lis(arr) {
 
   for (let i = 0; i < n; i++) {
     let temp_arr = [arr[i]];
-    for (let j = i - 1; j > 0; j--) {
+    for (let j = i - 1; j >= 0; j--) {
       if (arr[j] <= temp_arr[0]) {
         temp_arr.splice(0, 0, arr[j]);
       }
@@ -42,4 +66,14 @@ function lis(arr) {
   }
 
   return longestSub;
+}
+
+function arrayMove(arr, old_index, new_index) {
+  if (new_index >= arr.length) {
+    var k = new_index - arr.length + 1;
+    while (k--) {
+      arr.push(undefined);
+    }
+  }
+  arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
 }

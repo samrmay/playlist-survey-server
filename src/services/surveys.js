@@ -61,24 +61,23 @@ export async function putSurveyRankings(id, rankings) {
 async function updateSpotifyPlaylist(oldRankings, document) {
   const { refreshToken, trackRankings, playlistSpotifyId } = document;
   const callArr = getReorderSteps(oldRankings, trackRankings);
-  console.log(callArr);
   const tokenResponse = await getRefreshToken(refreshToken);
   const token = tokenResponse.access_token;
 
-  let snapshotId = null;
+  const playlist = await getPlaylistById(playlistSpotifyId, token);
+  let { snapshot_id } = playlist;
+
   for (let i in callArr) {
     const { rangeStart, rangeLength, insertBefore } = callArr[i];
-    const reorderResponse = await reorderPlaylistItems(
+    const snapResponse = await reorderPlaylistItems(
       playlistSpotifyId,
       token,
       rangeStart,
       rangeLength,
       insertBefore,
-      snapshotId
+      snapshot_id
     );
-    if (reorderResponse.snapshot_id) {
-      snapshotId = reorderResponse.snapshot_id;
-    }
+    snapshot_id = snapResponse.snapshot_id;
   }
   return null;
 }
