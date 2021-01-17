@@ -28,7 +28,6 @@ export default (oldArr, newArr) => {
           rangeLength: 1,
           insertBefore: target,
         });
-        console.log(i, indexArr[i], target);
 
         indexArr.splice(target, 0, indexArr[i]);
         let misplacedIndex = indexArr.indexOf(indexArr[target]);
@@ -41,8 +40,6 @@ export default (oldArr, newArr) => {
       }
     }
     longest = lis(indexArr);
-    console.log("longest: ", longest);
-    console.log("indexArr: ", indexArr);
   }
 
   return resultArr;
